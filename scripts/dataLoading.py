@@ -12,6 +12,10 @@ from src.transformers import (
     SavitzkyGolayTransformer,
     DerivativeTransformer,
 )
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cross_decomposition import PLSRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, mean_squared_error
 
 # Define data paths
 DATA_PATH = project_root / "data"
@@ -89,3 +93,49 @@ mat_snv_deriv1_3cl = pd.DataFrame(
     columns=spectral_cols,
     index=data_3cl.index
 )
+
+# Function to analyze data using Random Forest
+def analyze_with_random_forest(X, y):
+    """
+    Perform classification using Random Forest.
+    Args:
+        X (numpy.ndarray): Feature matrix.
+        y (numpy.ndarray): Target labels.
+    Returns:
+        float: Accuracy of the Random Forest model.
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    rf = RandomForestClassifier(random_state=42)
+    rf.fit(X_train, y_train)
+    y_pred = rf.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Random Forest Accuracy: {accuracy:.2f}")
+    return accuracy
+
+# Function to analyze data using PLS regression
+def analyze_with_pls(X, y, n_components=2):
+    """
+    Perform regression using Partial Least Squares (PLS).
+    Args:
+        X (numpy.ndarray): Feature matrix.
+        y (numpy.ndarray): Target values.
+        n_components (int): Number of PLS components.
+    Returns:
+        float: Mean squared error of the PLS model.
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    pls = PLSRegression(n_components=n_components)
+    pls.fit(X_train, y_train)
+    y_pred = pls.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    print(f"PLS Regression Mean Squared Error: {mse:.2f}")
+    return mse
+
+# Example usage (replace with actual data loading logic)
+if __name__ == "__main__":
+    # Example: Replace with actual data loading
+    # X = ... (feature matrix)
+    # y = ... (target labels or values)
+    # analyze_with_random_forest(X, y)
+    # analyze_with_pls(X, y)
+    pass
